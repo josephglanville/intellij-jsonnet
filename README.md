@@ -1,6 +1,9 @@
-IntelliJ Jsonnet
------------------
-This plugin teaches IntelliJ how to understand the .jsonnet and .jsonnet.TEMPLATE files. It includes the following features.
+IntelliJ libsonnet
+---------------------------
+
+A version of databricks/intellij-jsonnet modified to support libsonnet files
+
+This plugin teaches IntelliJ how to understand the .libsonnet, .jsonnet and .jsonnet.TEMPLATE files. It includes the following features.
 
 - Syntax Highlighting
 - Autocomplete for imported files, local variables
