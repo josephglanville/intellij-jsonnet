@@ -8,6 +8,19 @@ public class JsonnetFileTypeFactory extends FileTypeFactory {
     public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
         fileTypeConsumer.consume(
                 JsonnetFileType.INSTANCE,
+		new FileNameMatcher(){
+
+                    @Override
+                    public boolean accept(@NotNull String fileName) {
+                        return fileName.endsWith(".libsonnet");
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getPresentableString() {
+                        return ".libsonnet";
+                    }
+                },
                 new FileNameMatcher(){
 
                     @Override
