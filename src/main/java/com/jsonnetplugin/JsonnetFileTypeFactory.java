@@ -38,6 +38,19 @@ public class JsonnetFileTypeFactory extends FileTypeFactory {
 
                     @Override
                     public boolean accept(@NotNull String fileName) {
+                        return fileName.endsWith(".libsonnet");
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getPresentableString() {
+                        return ".libsonnet";
+                    }
+                },
+                new FileNameMatcher(){
+
+                    @Override
+                    public boolean accept(@NotNull String fileName) {
                         return fileName.endsWith(".jsonnet.TEMPLATE");
                     }
 

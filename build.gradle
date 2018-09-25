@@ -1,0 +1,123 @@
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.grammarkit.tasks.GenerateParser
+
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+
+  }
+  dependencies {
+    classpath 'com.netflix.nebula:gradle-lint-plugin:latest.release'
+    classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.3.11"
+  }
+}
+
+plugins {
+  id 'org.jetbrains.intellij' version '0.3.11'
+  id "org.jetbrains.grammarkit" version "2018.2"
+  id "de.undercouch.download" version "3.2.0"
+}
+apply plugin: 'java'
+apply plugin: 'nebula.lint'
+
+gradleLint.rules = ['unused-dependency']
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10.1'
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+def genRoot = file('gen')
+
+sourceSets {
+  main {
+    java {
+      srcDirs 'src/main/java'
+      srcDirs genRoot
+    }
+    resources {
+      srcDirs 'src/main/resources'
+    }
+  }
+}
+
+group = 'com.jsonnetplugin'
+archivesBaseName = 'jesse-jsonnet'
+
+//mainClassName = "com.jesse"
+
+repositories {
+  mavenCentral()
+}
+
+apply plugin: 'de.undercouch.download'
+task downloadPsiViewerPlugin() {
+    download {
+        src 'https://plugins.jetbrains.com/plugin/download?updateId=31087'
+        dest new File("${buildDir}/tmp/plugins/", 'PsiViewer.jar')
+        onlyIfNewer true
+    }
+}
+
+task copyPsiViewerPluginToSandBox(type: Copy) {
+    from "${buildDir}/tmp/plugins/PsiViewer.jar"
+    into "${buildDir}/idea-sandbox/plugins/"
+}
+copyPsiViewerPluginToSandBox.dependsOn downloadPsiViewerPlugin
+copyPsiViewerPluginToSandBox.mustRunAfter prepareSandbox
+runIde.dependsOn copyPsiViewerPluginToSandBox
+
+apply plugin: 'idea'
+idea {
+  project {
+    jdkName = javaVersion
+    languageLevel = javaVersion
+    vcs = 'Git'
+  }
+  module {
+    generatedSourceDirs += genRoot
+  }
+}
+
+apply plugin: 'org.jetbrains.intellij'
+version="173.7000"
+intellij {
+  version 'LATEST-TRUNK-SNAPSHOT'
+  type 'IC' //community edition
+  pluginName 'jesse-jsonnet'
+  downloadSources false
+  updateSinceUntilBuild false
+  //plugins = ['IntelliLang', 'Grammer-Kit', 'PsiViewer:183.2153', 'Copyright']
+  plugins = ['IntelliLang', 'PsiViewer:183.2153', 'Copyright']
+}
+
+apply plugin: 'org.jetbrains.grammarkit'
+grammarKit {
+    jflexRelease = '1.7.0-1'
+    grammarKitRelease = '6452fde524'
+}
+
+task generateJsonnetParser(type: GenerateParser) {
+    source = "src/main/resources/com/jsonnetplugin/Jsonnet.bnf"
+    targetRoot = 'gen'
+    pathToParser = '/com/jsonnetplugin/lang/jsonnet/parser/JsonnetParserGenerated.java'
+    
+    // path to a directory with generated psi files, relative to the targetRoot 
+    pathToPsiRoot = '/com/jsonnetplugin/psi'
+    purgeOldFiles = true
+}
+
+task generateJsonnetLexer(type: GenerateLexer) {
+    dependsOn generateJsonnetParser
+    source = "src/main/resources/com/jsonnetplugin/Jsonnet.flex"
+    targetDir = "gen/com/jsonnetplugin/lang/jsonnet/lexer/"
+    targetClass = "JsonnetLexer"
+    purgeOldFiles = true
+}
+buildPlugin.dependsOn generateJsonnetLexer
+
+dependencies {
+
+}
