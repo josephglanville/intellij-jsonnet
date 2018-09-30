@@ -23,25 +23,21 @@ apply plugin: 'nebula.lint'
 
 gradleLint.rules = ['unused-dependency']
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.10.1'
-}
-
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 def genRoot = file('gen')
 
 sourceSets {
-  main {
-    java {
-      srcDirs 'src/main/java'
-      srcDirs genRoot
+    main {
+        java.srcDirs 'src', genRoot
+        resources.srcDir 'resources'
     }
-    resources {
-      srcDirs 'src/main/resources'
+    test {
+        java.srcDir 'test'
+        resources.srcDirs 'testData'
     }
-  }
 }
+
 
 group = 'com.jsonnetplugin'
 archivesBaseName = 'jesse-jsonnet'
@@ -50,6 +46,10 @@ archivesBaseName = 'jesse-jsonnet'
 
 repositories {
   mavenCentral()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10.2'
 }
 
 apply plugin: 'de.undercouch.download'
@@ -87,7 +87,7 @@ intellij {
   version 'LATEST-TRUNK-SNAPSHOT'
   type 'IC' //community edition
   pluginName 'jesse-jsonnet'
-  downloadSources false
+  downloadSources true
   updateSinceUntilBuild false
   //plugins = ['IntelliLang', 'Grammer-Kit', 'PsiViewer:183.2153', 'Copyright']
   plugins = ['IntelliLang', 'PsiViewer:183.2153', 'Copyright']
@@ -100,7 +100,7 @@ grammarKit {
 }
 
 task generateJsonnetParser(type: GenerateParser) {
-    source = "src/main/resources/com/jsonnetplugin/Jsonnet.bnf"
+    source = "resources/com/jsonnetplugin/Jsonnet.bnf"
     targetRoot = 'gen'
     pathToParser = '/com/jsonnetplugin/lang/jsonnet/parser/JsonnetParserGenerated.java'
     
@@ -111,12 +111,17 @@ task generateJsonnetParser(type: GenerateParser) {
 
 task generateJsonnetLexer(type: GenerateLexer) {
     dependsOn generateJsonnetParser
-    source = "src/main/resources/com/jsonnetplugin/Jsonnet.flex"
+    source = "resources/com/jsonnetplugin/Jsonnet.flex"
     targetDir = "gen/com/jsonnetplugin/lang/jsonnet/lexer/"
     targetClass = "JsonnetLexer"
     purgeOldFiles = true
 }
 buildPlugin.dependsOn generateJsonnetLexer
+
+compileJava {
+    dependsOn generateJsonnetParser
+    dependsOn generateJsonnetLexer
+}
 
 dependencies {
 
