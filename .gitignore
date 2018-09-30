@@ -3,3 +3,6 @@ gen/
 .idea/
 .gradle/
 build/
+*.iml
+*.ipr
+*.iws

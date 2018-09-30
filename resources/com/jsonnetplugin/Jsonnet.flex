@@ -31,6 +31,10 @@ TRIPLE_BAR_QUOTED_STRING=\|\|\|\s*\n\s+(\|[^\|]|\|\|[^\|]|[^\|])*\|\|\|
 IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_]*
 
 %%
+/**
+* 'lexical rules' section of jflex file
+*/
+
 <YYINITIAL> {
   {WHITE_SPACE}               { return WHITE_SPACE; }
 
