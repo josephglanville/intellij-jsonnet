@@ -88,7 +88,7 @@ intellij {
   downloadSources true
   updateSinceUntilBuild false
   //plugins = ['IntelliLang', 'Grammer-Kit', 'PsiViewer:183.2153', 'Copyright']
-  plugins = ['IntelliLang', 'PsiViewer:183.2153', 'Copyright']
+  plugins = ['IntelliLang', 'PsiViewer:191-SNAPSHOT', 'Copyright']
 }
 
 apply plugin: 'org.jetbrains.grammarkit'
@@ -122,5 +122,6 @@ compileJava {
 }
 
 dependencies {
+    compile 'com.jetbrains:ideaIC:LATEST-TRUNK-SNAPSHOT'
 
 }
