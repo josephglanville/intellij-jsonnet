@@ -40,9 +40,7 @@ sourceSets {
 
 
 group = 'com.jsonnetplugin'
-archivesBaseName = 'jesse-jsonnet'
-
-//mainClassName = "com.jesse"
+archivesBaseName = 'josephglanville-jsonnet'
 
 repositories {
   mavenCentral()
@@ -86,7 +84,7 @@ version="173.7000"
 intellij {
   version 'LATEST-TRUNK-SNAPSHOT'
   type 'IC' //community edition
-  pluginName 'jesse-jsonnet'
+  pluginName 'josephglanville-jsonnet'
   downloadSources true
   updateSinceUntilBuild false
   //plugins = ['IntelliLang', 'Grammer-Kit', 'PsiViewer:183.2153', 'Copyright']
