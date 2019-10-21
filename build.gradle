@@ -14,8 +14,8 @@ buildscript {
 }
 
 plugins {
-  id 'org.jetbrains.intellij' version '0.3.11'
-  id "org.jetbrains.grammarkit" version "2018.2"
+  id 'org.jetbrains.intellij' version '0.4.10'
+  id "org.jetbrains.grammarkit" version "2019.3"
   id "de.undercouch.download" version "3.2.0"
 }
 apply plugin: 'java'
@@ -46,10 +46,6 @@ repositories {
   mavenCentral()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.10.2'
-}
-
 apply plugin: 'de.undercouch.download'
 task downloadPsiViewerPlugin() {
     download {
@@ -63,6 +59,7 @@ task copyPsiViewerPluginToSandBox(type: Copy) {
     from "${buildDir}/tmp/plugins/PsiViewer.jar"
     into "${buildDir}/idea-sandbox/plugins/"
 }
+
 copyPsiViewerPluginToSandBox.dependsOn downloadPsiViewerPlugin
 copyPsiViewerPluginToSandBox.mustRunAfter prepareSandbox
 runIde.dependsOn copyPsiViewerPluginToSandBox
@@ -81,14 +78,15 @@ idea {
 
 apply plugin: 'org.jetbrains.intellij'
 version="173.7000"
+
 intellij {
-  version 'LATEST-TRUNK-SNAPSHOT'
+  version '2019.2.3'
   type 'IC' //community edition
   pluginName 'josephglanville-jsonnet'
   downloadSources true
   updateSinceUntilBuild false
   //plugins = ['IntelliLang', 'Grammer-Kit', 'PsiViewer:183.2153', 'Copyright']
-  plugins = ['IntelliLang', 'PsiViewer:191-SNAPSHOT', 'Copyright']
+  plugins = ['IntelliLang', 'PsiViewer:192-SNAPSHOT', 'Copyright']
 }
 
 apply plugin: 'org.jetbrains.grammarkit'
@@ -114,6 +112,7 @@ task generateJsonnetLexer(type: GenerateLexer) {
     targetClass = "JsonnetLexer"
     purgeOldFiles = true
 }
+
 buildPlugin.dependsOn generateJsonnetLexer
 
 compileJava {
@@ -122,6 +121,5 @@ compileJava {
 }
 
 dependencies {
-    compile 'com.jetbrains:ideaIC:LATEST-TRUNK-SNAPSHOT'
-
+    compile 'com.jetbrains:ideaIC:2019.2.3'
 }
